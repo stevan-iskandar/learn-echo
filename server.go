@@ -4,6 +4,7 @@ import (
 	"github.com/gookit/validate"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	_ "github.com/stevan-iskandar/learn-echo/autoload"
 	"github.com/stevan-iskandar/learn-echo/routes"
 )
 
