@@ -1,0 +1,25 @@
+# Compiled binary
+/bin/
+
+# Dependency directories
+/vendor/
+/go.sum
+/go.mod
+
+# Log files
+*.log
+
+# IDE and editor files
+.idea/
+.vscode/
+
+# Executables
+*.exe
+*.out
+
+# OS-specific files
+Thumbs.db
+.DS_Store
+
+# Environment variables file
+.env
