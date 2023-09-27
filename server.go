@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/gookit/validate"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/stevan-iskandar/learn-echo/autoload"
@@ -9,10 +8,6 @@ import (
 )
 
 func main() {
-	validate.Config(func(opt *validate.GlobalOption) {
-		opt.StopOnError = false
-	})
-
 	e := echo.New()
 
 	// Middleware

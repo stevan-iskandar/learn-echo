@@ -7,5 +7,7 @@ import (
 )
 
 func Init(e *echo.Echo) {
+	e.GET("/", controllers.Root)
+
 	e.POST("/user", controllers.Store, validations.StoreValidation)
 }

@@ -1,20 +1,18 @@
 package models
 
 import (
-	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/kamva/mgm/v3"
 )
 
-const USER string = "users"
-
 type User struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty"`
-	Name      string             `bson:"name"`
-	Email     string             `bson:"email"`
-	Age       int                `bson:"age"`
-	Safe      int                `bson:"safe"`
-	Code      string             `bson:"code"`
-	CreatedAt time.Time          `bson:"created_at"`
-	UpdatedAt time.Time          `bson:"updated_at"`
+	mgm.DefaultModel `bson:",inline"`
+	Name             string `json:"name" bson:"name"`
+	Email            string `json:"email" bson:"email"`
+	Age              int    `json:"age" bson:"age"`
+	Safe             int    `json:"safe" bson:"safe"`
+	Code             string `json:"code" bson:"code"`
+}
+
+func (model *User) CollectionName() string {
+	return "users"
 }
