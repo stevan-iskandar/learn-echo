@@ -1,6 +1,6 @@
 package constants
 
-const GIN_MODE string = "GIN_MODE"
+const DEBUG string = "DEBUG"
 const DB_HOST string = "DB_HOST"
 const DB_PORT string = "DB_PORT"
 const DB_NAME string = "DB_NAME"

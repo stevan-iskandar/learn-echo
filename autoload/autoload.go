@@ -3,10 +3,11 @@ package autoload
 import (
 	"os"
 
+	"learn-echo/constants"
+
 	"github.com/gookit/validate"
 	"github.com/joho/godotenv"
 	"github.com/kamva/mgm/v3"
-	"github.com/stevan-iskandar/learn-echo/constants"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 

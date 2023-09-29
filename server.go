@@ -1,10 +1,11 @@
 package main
 
 import (
+	_ "learn-echo/autoload"
+	"learn-echo/routes"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	_ "github.com/stevan-iskandar/learn-echo/autoload"
-	"github.com/stevan-iskandar/learn-echo/routes"
 )
 
 func main() {

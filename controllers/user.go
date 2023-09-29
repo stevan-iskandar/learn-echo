@@ -6,10 +6,12 @@ import (
 	"net/http"
 	"time"
 
+	"learn-echo/helpers"
+	"learn-echo/models"
+	"learn-echo/validations"
+
 	"github.com/kamva/mgm/v3"
 	"github.com/labstack/echo/v4"
-	"github.com/stevan-iskandar/learn-echo/models"
-	"github.com/stevan-iskandar/learn-echo/validations"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -34,10 +36,11 @@ func Root(c echo.Context) error {
 	startTime := time.Now()
 
 	for i := 1; i <= 1000; i++ {
+		password, _ := helpers.HashPassword(fmt.Sprintf("password*%d*", i))
 		user := &UserMGM{
 			Username:  fmt.Sprintf("user%d", i),
 			Email:     fmt.Sprintf("user%d@email.com", i),
-			Password:  fmt.Sprintf("password*%d*", i),
+			Password:  password,
 			FirstName: fmt.Sprintf("first%d", i),
 			LastName:  fmt.Sprintf("last%d", i),
 			WrongPass: i % 2,
