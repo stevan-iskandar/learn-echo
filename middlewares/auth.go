@@ -1,18 +1,18 @@
 package middlewares
 
 import (
+	"learn-echo/constants"
 	"net/http"
+	"os"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
-
-const SIGNING_KEY = "echo_token_key"
 
 type CustomClaims struct {
 	UserID   string `json:"user_id"`
 	Username string `json:"username"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func Auth(next echo.HandlerFunc) echo.HandlerFunc {
@@ -22,24 +22,25 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, "Missing token")
 		}
 
+		claims := &CustomClaims{}
+
 		// Remove "Bearer " prefix from token string
 		tokenString = tokenString[len("Bearer "):]
-		println(tokenString)
 
 		// Parse and verify the token
-		token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-			return []byte(SIGNING_KEY), nil
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
+			return []byte(os.Getenv(constants.JWT_KEY)), nil
 		})
 
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 		}
 
-		if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
-			c.Set("user", claims)
-			return next(c)
+		if !token.Valid {
+			return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token")
 		}
 
-		return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token")
+		c.Set("user", claims)
+		return next(c)
 	}
 }

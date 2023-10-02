@@ -15,8 +15,8 @@ func Init(e *echo.Echo) {
 
 	api := e.Group("/api")
 
-	api.POST("/login", controllers.Login)
 	api.POST("/register", controllers.Register)
+	api.POST("/login", controllers.Login, validations.LoginValidation)
 
 	api.Use(middlewares.Auth)
 
