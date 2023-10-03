@@ -9,11 +9,11 @@ import (
 
 // UserStoreForm struct
 type UserStoreForm struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	Age   int    `json:"age"`
-	Safe  int    `json:"safe"`
-	Code  string `json:"code"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
 }
 
 const STORE_VALIDATION = "StoreValidation"

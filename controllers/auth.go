@@ -6,6 +6,8 @@ import (
 
 	"learn-echo/helpers"
 	"learn-echo/middlewares"
+	"learn-echo/models"
+	"learn-echo/structs"
 	"learn-echo/validations"
 
 	"github.com/kamva/mgm/v3"
@@ -14,25 +16,15 @@ import (
 )
 
 func Register(c echo.Context) error {
-	// Replace this with your registration logic, e.g., storing user data in the database.
-	// After registration, you can generate and return a JWT to the client.
-
-	// For simplicity, we'll generate a token with some mock user data.
-	expirationTime := time.Now().Add(time.Hour * 24 * 7)
-	token, err := helpers.GenerateToken("user123", "john.doe", expirationTime)
-	if err != nil {
-		return err
-	}
-
-	return c.JSON(http.StatusOK, map[string]string{
-		"token": token,
+	return c.JSON(http.StatusOK, structs.Response{
+		Message: "User created",
 	})
 }
 
-func getUserByUsername(username string) (*UserMGM, error) {
+func getUserByUsername(username string) (*models.User, error) {
 	filter := bson.M{"username": username}
 
-	user := &UserMGM{}
+	user := &models.User{}
 
 	// Find the user document in the collection
 	err := mgm.Coll(user).First(filter, user)
@@ -48,34 +40,33 @@ func Login(c echo.Context) error {
 
 	user, err := getUserByUsername(credentials.Username)
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
-			"message": err,
+		return c.JSON(http.StatusUnauthorized, structs.Response{
+			Message: err.Error(),
 		})
 	}
 
 	if validated := helpers.VerifyPassword(user.Password, credentials.Password); !validated {
-		return c.JSON(http.StatusUnauthorized, map[string]interface{}{
-			"message": "Wrong password",
+		return c.JSON(http.StatusUnauthorized, structs.Response{
+			Message: "Wrong password",
 		})
 	}
 
 	expirationTime := time.Now().Add(time.Hour * 24 * 7)
-	token, err := helpers.GenerateToken(user.ID.String(), user.Username, expirationTime)
+	token, err := helpers.GenerateToken(user.ID, user.Username, expirationTime)
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"token":      token,
-		"user":       user,
-		"expires_at": expirationTime,
+	return c.JSON(http.StatusOK, structs.Response{
+		Message: "Successfully logged in",
+		Data: map[string]interface{}{
+			"token":      token,
+			"user":       user,
+			"expires_at": expirationTime,
+		},
 	})
 }
 
-func GetUser(c echo.Context) error {
-	claims := c.Get("user").(*middlewares.CustomClaims)
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"user_id":  claims.UserID,
-		"username": claims.Username,
-	})
+func User(c echo.Context) interface{} {
+	return c.Get(middlewares.USER).(*middlewares.CustomClaims)
 }

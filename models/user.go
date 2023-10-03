@@ -6,11 +6,14 @@ import (
 
 type User struct {
 	mgm.DefaultModel `bson:",inline"`
-	Name             string `json:"name" bson:"name"`
+	Username         string `json:"username" bson:"username" mgm:"unique"`
 	Email            string `json:"email" bson:"email"`
-	Age              int    `json:"age" bson:"age"`
-	Safe             int    `json:"safe" bson:"safe"`
-	Code             string `json:"code" bson:"code"`
+	Password         string `json:"-" bson:"password"`
+	FirstName        string `json:"first_name" bson:"first_name"`
+	LastName         string `json:"last_name" bson:"last_name"`
+	WrongPass        int    `json:"-" bson:"wrong_pass"`
+	CreatedBy        *User  `json:"created_by" bson:"created_by"`
+	UpdatedBy        *User  `json:"updated_by" bson:"updated_by"`
 }
 
 func (model *User) CollectionName() string {

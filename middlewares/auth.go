@@ -15,6 +15,8 @@ type CustomClaims struct {
 	jwt.RegisteredClaims
 }
 
+const USER = "userAuth"
+
 func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		tokenString := c.Request().Header.Get("Authorization")
@@ -29,7 +31,7 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 
 		// Parse and verify the token
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (any, error) {
-			return []byte(os.Getenv(constants.JWT_KEY)), nil
+			return []byte(os.Getenv(constants.ENV_JWT_KEY)), nil
 		})
 
 		if err != nil {
@@ -40,7 +42,7 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token")
 		}
 
-		c.Set("user", claims)
+		c.Set(USER, claims)
 		return next(c)
 	}
 }

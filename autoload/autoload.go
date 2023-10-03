@@ -16,7 +16,7 @@ func init() {
 		panic(err)
 	}
 
-	if err := mgm.SetDefaultConfig(nil, os.Getenv(constants.DB_NAME), options.Client().ApplyURI(os.Getenv(constants.MONGO_URI))); err != nil {
+	if err := mgm.SetDefaultConfig(nil, os.Getenv(constants.ENV_DB_NAME), options.Client().ApplyURI(os.Getenv(constants.ENV_MONGO_URI))); err != nil {
 		panic(err)
 	}
 
