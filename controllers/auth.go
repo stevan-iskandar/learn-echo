@@ -52,7 +52,7 @@ func Login(c echo.Context) error {
 	}
 
 	expirationTime := time.Now().Add(time.Hour * 24 * 7)
-	token, err := helpers.GenerateToken(user.ID, user.Username, expirationTime)
+	token, err := helpers.GenerateToken(user, expirationTime)
 	if err != nil {
 		return err
 	}
@@ -67,6 +67,6 @@ func Login(c echo.Context) error {
 	})
 }
 
-func User(c echo.Context) interface{} {
-	return c.Get(middlewares.USER).(*middlewares.CustomClaims)
+func User(c echo.Context) *structs.JWTClaims {
+	return c.Get(middlewares.USER).(*structs.JWTClaims)
 }

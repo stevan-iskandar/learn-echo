@@ -2,20 +2,19 @@ package helpers
 
 import (
 	"learn-echo/constants"
-	"learn-echo/middlewares"
+	"learn-echo/models"
+	"learn-echo/structs"
 	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func GenerateToken(userID primitive.ObjectID, username string, expirationTime time.Time) (string, error) {
-	claims := middlewares.CustomClaims{
-		UserID:   userID.Hex(),
-		Username: username,
+func GenerateToken(user *models.User, expirationTime time.Time) (string, error) {
+	claims := structs.JWTClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			ID:     user.ID.Hex(),
+			Issuer: user.Username,
 		},
 	}
 

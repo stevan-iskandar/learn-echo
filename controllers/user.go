@@ -35,7 +35,12 @@ func UserStore(c echo.Context) error {
 
 func UserList(c echo.Context) error {
 	var users []*models.User
-	data, err := helpers.Pagination(c, &models.User{}, users)
+	usernames := c.QueryParams()["username"]
+	email := c.QueryParam("email")
+	data, err := helpers.Pagination(c, &models.User{}, users, map[string]interface{}{
+		"username": usernames,
+		"email":    email,
+	})
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, structs.Response{Message: err.Error()})
 	}

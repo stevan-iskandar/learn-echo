@@ -2,9 +2,9 @@ package helpers
 
 import (
 	"context"
-	"fmt"
 	"learn-echo/structs"
 	"strconv"
+	"strings"
 
 	"github.com/kamva/mgm/v3"
 	"github.com/labstack/echo/v4"
@@ -12,10 +12,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func Pagination(c echo.Context, model mgm.Model, data interface{}) (*structs.Pagination, error) {
+func Pagination(c echo.Context, model mgm.Model, data interface{}, filterMap map[string]interface{}) (*structs.Pagination, error) {
 	// Parse query parameters for pagination
 	page, _ := strconv.Atoi(c.QueryParam("page"))          // Page number
 	pageSize, _ := strconv.Atoi(c.QueryParam("page_size")) // Items per page
+	sorts := c.QueryParams()["sort"]                       // Get an array of sorting parameters
 
 	if page < 1 {
 		page = 1
@@ -33,8 +34,11 @@ func Pagination(c echo.Context, model mgm.Model, data interface{}) (*structs.Pag
 	findOptions.SetLimit(int64(pageSize))
 	findOptions.SetSkip(int64(skip))
 
-	// Create a filter to find all users (you can customize this filter)
+	// Create a filter to find all data (you can customize this filter)
 	filter := bson.M{}
+	if filterMap != nil {
+		filter = FilterFromMap(filterMap)
+	}
 
 	// Count the total number of records
 	total, err := mgm.Coll(model).CountDocuments(context.Background(), filter)
@@ -42,23 +46,25 @@ func Pagination(c echo.Context, model mgm.Model, data interface{}) (*structs.Pag
 		return nil, err
 	}
 
+	// Apply sorting based on the request parameters
 	sortFields := bson.D{}
-	for i := 0; ; i++ {
-		field := c.QueryParam(fmt.Sprintf("sort[%d]field", i))
-		// println(fmt.Sprintf("field_%d: %s", i, field))
-		if field == "" {
-			break
-		}
-
-		order := c.QueryParam(fmt.Sprintf("sort[%d]order", i))
-		// println(fmt.Sprintf("order_%d: %s", i, order))
-		if order == "" {
+	for _, sortParam := range sorts {
+		// Split the sort parameter into field and order
+		parts := strings.Split(sortParam, ":")
+		if len(parts) != 2 {
 			return nil, CustomError("Invalid sort parameter")
 		}
 
 		// Check if the order is valid
-		if order != "asc" && order != "desc" {
+		if parts[1] != "asc" && parts[1] != "desc" {
 			return nil, CustomError("Invalid sort order")
+		}
+
+		field := parts[0]
+		order := 1 // 1 = asc, -1 = desc
+
+		if parts[1] == "desc" {
+			order = -1
 		}
 
 		// Append the field and order to the sortFields
@@ -67,7 +73,6 @@ func Pagination(c echo.Context, model mgm.Model, data interface{}) (*structs.Pag
 			Value: order,
 		})
 	}
-	println(sortFields)
 
 	// Set the sorting options
 	if len(sortFields) > 0 {
