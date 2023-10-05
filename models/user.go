@@ -6,7 +6,7 @@ import (
 
 type User struct {
 	mgm.DefaultModel `bson:",inline"`
-	Username         string `json:"username" bson:"username" mgm:"unique"`
+	Username         string `json:"username" bson:"username"`
 	Email            string `json:"email" bson:"email"`
 	Password         string `json:"-" bson:"password"`
 	FirstName        string `json:"first_name" bson:"first_name"`

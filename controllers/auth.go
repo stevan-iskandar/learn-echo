@@ -40,13 +40,13 @@ func Login(c echo.Context) error {
 
 	user, err := getUserByUsername(credentials.Username)
 	if err != nil {
-		return c.JSON(http.StatusUnauthorized, structs.Response{
+		return echo.NewHTTPError(http.StatusUnauthorized, structs.Response{
 			Message: err.Error(),
 		})
 	}
 
 	if validated := helpers.VerifyPassword(user.Password, credentials.Password); !validated {
-		return c.JSON(http.StatusUnauthorized, structs.Response{
+		return echo.NewHTTPError(http.StatusUnauthorized, structs.Response{
 			Message: "Wrong password",
 		})
 	}

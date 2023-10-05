@@ -16,7 +16,7 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		tokenString := c.Request().Header.Get("Authorization")
 		if tokenString == "" {
-			return echo.NewHTTPError(http.StatusUnauthorized, structs.Response{Message: "Missing token"})
+			return c.JSON(http.StatusUnauthorized, structs.Response{Message: "Missing token"})
 		}
 
 		// Remove "Bearer " prefix from token string
@@ -30,11 +30,11 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		})
 
 		if err != nil {
-			return echo.NewHTTPError(http.StatusUnauthorized, structs.Response{Message: err.Error()})
+			return c.JSON(http.StatusUnauthorized, structs.Response{Message: err.Error()})
 		}
 
 		if !token.Valid {
-			return echo.NewHTTPError(http.StatusUnauthorized, structs.Response{Message: "Invalid token"})
+			return c.JSON(http.StatusUnauthorized, structs.Response{Message: "Invalid token"})
 		}
 
 		c.Set(USER, claims)

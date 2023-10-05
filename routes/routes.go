@@ -17,6 +17,5 @@ func Init(e *echo.Echo) {
 
 	api.Use(middlewares.Auth)
 
-	api.GET("/user", controllers.UserList)
-	api.POST("/user", controllers.UserStore, validations.StoreValidation)
+	RouteUser(api)
 }

@@ -1,6 +1,8 @@
 package validations
 
 import (
+	"learn-echo/helpers"
+	"learn-echo/structs"
 	"net/http"
 
 	"github.com/gookit/validate"
@@ -18,7 +20,9 @@ func LoginValidation(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		data, err := validate.FromRequest(c.Request())
 		if err != nil {
-			return err
+			return c.JSON(http.StatusUnprocessableEntity, structs.Response{
+				Message: err.Error(),
+			})
 		}
 
 		v := data.Create()
@@ -28,7 +32,7 @@ func LoginValidation(next echo.HandlerFunc) echo.HandlerFunc {
 		})
 
 		if !v.Validate() {
-			return c.JSON(http.StatusUnprocessableEntity, v.Errors)
+			return c.JSON(http.StatusUnprocessableEntity, helpers.FormError(v.Errors))
 		}
 
 		credentials := &Credentials{}
