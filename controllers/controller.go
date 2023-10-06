@@ -17,17 +17,29 @@ func Root(c echo.Context) error {
 	// Test write speed.
 	startTime := time.Now()
 
+	permissions := &[]models.Permission{}
+	err := mgm.Coll(&models.Permission{}).SimpleFind(permissions, map[string]interface{}{})
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, structs.Response{Message: err.Error()})
+	}
+
+	var allowedPermissions []string
+	for _, permission := range *permissions {
+		allowedPermissions = append(allowedPermissions, permission.Code)
+	}
+
 	for i := 1; i <= 1000; i++ {
 		password, _ := helpers.HashPassword(fmt.Sprintf("password*%d*", i))
 		user := &models.User{
-			Username:  fmt.Sprintf("user%d", i),
-			Email:     fmt.Sprintf("user%d@email.com", i),
-			Password:  password,
-			FirstName: fmt.Sprintf("first%d", i),
-			LastName:  fmt.Sprintf("last%d", i),
-			WrongPass: i % 2,
+			Username:    fmt.Sprintf("user%d", i),
+			Email:       fmt.Sprintf("user%d@email.com", i),
+			Password:    password,
+			FirstName:   fmt.Sprintf("first%d", i),
+			LastName:    fmt.Sprintf("last%d", i),
+			WrongPass:   i % 2,
+			Permissions: allowedPermissions,
 		}
-		if err := mgm.Coll(user).Create(user); err != nil {
+		if err := helpers.FirstOrCreate(&models.User{}, bson.M{"username": user.Username}, user); err != nil {
 			return c.JSON(http.StatusInternalServerError, structs.Response{Message: err.Error()})
 		}
 	}

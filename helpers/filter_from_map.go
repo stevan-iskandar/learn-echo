@@ -10,7 +10,7 @@ func FilterFromMap(input map[string]interface{}) bson.M {
 	bsonData := bson.M{}
 
 	for key, value := range input {
-		if value == "" {
+		if value == nil || value == "" {
 			continue
 		}
 
