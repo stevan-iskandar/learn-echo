@@ -9,5 +9,6 @@ const (
 	ENV_DB_PASS   string = "DB_PASS"
 	ENV_MONGO_URI string = "MONGO_URI"
 
+	PORT        string = "PORT"
 	ENV_JWT_KEY string = "JWT_KEY"
 )

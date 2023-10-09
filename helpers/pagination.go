@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"fmt"
 	"learn-echo/structs"
 	"strconv"
 	"strings"
@@ -52,12 +53,12 @@ func Pagination(c echo.Context, model mgm.Model, data interface{}, filterMap map
 		// Split the sort parameter into field and order
 		parts := strings.Split(sortParam, ":")
 		if len(parts) != 2 {
-			return nil, CustomError("Invalid sort parameter")
+			return nil, fmt.Errorf("invalid sort parameter")
 		}
 
 		// Check if the order is valid
 		if parts[1] != "asc" && parts[1] != "desc" {
-			return nil, CustomError("Invalid sort order")
+			return nil, fmt.Errorf("invalid sort order")
 		}
 
 		field := parts[0]
