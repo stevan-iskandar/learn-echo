@@ -50,3 +50,18 @@ func UserStore(c echo.Context) error {
 		Data:    user,
 	})
 }
+
+func UserUpdate(c echo.Context) error {
+	strVal := c.QueryParam("id")
+
+	encryptedData := helpers.Encrypt(strVal)
+	decryptedData := helpers.Decrypt(encryptedData)
+
+	return c.JSON(http.StatusOK, structs.Response{
+		Data: map[string]interface{}{
+			"string":         strVal,
+			"encrypted_data": encryptedData,
+			"decrypted_data": decryptedData,
+		},
+	})
+}

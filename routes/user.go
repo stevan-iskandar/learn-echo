@@ -21,4 +21,8 @@ func RouteUser(api *echo.Group) {
 		middlewares.Permission(constants.PER_USER_CREATE),
 		validations.StoreValidation,
 	)
+	api.GET(
+		"/user/id",
+		controllers.UserUpdate,
+	)
 }
