@@ -27,5 +27,5 @@ func main() {
 	routes.Init(e)
 
 	// Run Server
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", os.Getenv(constants.PORT))))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", os.Getenv(constants.ENV_PORT))))
 }

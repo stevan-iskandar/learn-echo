@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"learn-echo/constants"
 	"learn-echo/helpers"
@@ -52,10 +53,19 @@ func UserStore(c echo.Context) error {
 }
 
 func UserUpdate(c echo.Context) error {
-	strVal := c.QueryParam("id")
+	strVal, err := strconv.Atoi(c.QueryParam("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, structs.Response{Message: err.Error()})
+	}
 
-	encryptedData := helpers.Encrypt(strVal)
-	decryptedData := helpers.Decrypt(encryptedData)
+	encryptedData, err := helpers.Encrypt(strVal)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, structs.Response{Message: err.Error()})
+	}
+	decryptedData, err := helpers.Decrypt(encryptedData)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, structs.Response{Message: err.Error()})
+	}
 
 	return c.JSON(http.StatusOK, structs.Response{
 		Data: map[string]interface{}{
